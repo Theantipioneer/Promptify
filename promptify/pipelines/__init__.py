@@ -1,6 +1,8 @@
 from pathlib import Path
 from tqdm import tqdm
 from typing import Any, Dict, Optional
+
+
 from promptify.prompter.conversation_logger import *
 from promptify.utils.data_utils import *
 from promptify.prompter.prompt_cache import PromptCache
@@ -31,7 +33,7 @@ class Pipeline:
             for key, value in model.__dict__.items()
             if is_string_or_digit(value)
         }
-        self.logger = ConversationLogger(self.conversation_path, self.model_dict)
+        # self.logger = ConversationLogger(self.conversation_path, self.model_dict)
 
     def fit(self, text_input: str, **kwargs) -> Any:
         """
@@ -42,7 +44,9 @@ class Pipeline:
         outputs_list = []
         for prompter in tqdm(self.prompters):
             try:
-                template, variables_dict = prompter.generate(text_input, self.model.model, **kwargs)
+                template, variables_dict = prompter.generate(
+                    text_input, self.model.model, **kwargs
+                )
 
             except ValueError as e:
                 print(f"Error in generating prompt: {e}")
@@ -73,7 +77,7 @@ class Pipeline:
                     template, variables_dict, output, None, prompt_name
                 )
 
-            self.logger.add_message(message)
+            # self.logger.add_message(message)
             outputs_list.append(output)
 
         return outputs_list
